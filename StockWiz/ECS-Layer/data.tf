@@ -24,8 +24,12 @@ data "aws_vpc" "network_vpc" {
 # Discover public subnets by tag Type=public and the VPC ID. Generated with AI
 data "aws_subnets" "public" {
   filter {
-    name = "tag:Type"
-    values = ["public"]
+    name = "vpc-id"
+    values = [data.aws_vpc.network_vpc.id]
   }
+
+  # tags = {
+  #   Type = "public"
+  # }
 }
 
