@@ -6,7 +6,11 @@ terraform {
     }
   }
 
-  backend "s3" {}
+  backend "s3" {
+    bucket = "tfstate-ob290199"
+    key    = "ecr-layer/terraform.tfstate"
+    region = "us-east-1"
+  }
 }
 
 provider "aws" {

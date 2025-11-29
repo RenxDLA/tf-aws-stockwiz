@@ -1,0 +1,45 @@
+name: Terraform CI/CD - ECR Layer
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'StockWiz/ECR-Layer/**'
+    workflows_dispatch:
+
+env:
+  AWS_REGION: 'us-east-1'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v6
+
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v5
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
+        aws-region: ${{ env.AWS_REGION }}
+    
+    - name: Set up Terraform
+      uses: hashicorp/setup-terraform@v3
+
+    - name: Terraform Init
+      working-directory: ./StockWiz/ECR-Layer
+      run: terraform init
+
+    - name: Terraform Plan
+      working-directory: ./StockWiz/ECR-Layer
+      run: terraform plan --var-file=main.tfvars
+
+    - name: Terraform Apply
+      working-directory: ./StockWiz/ECR-Layer
+      run: terraform apply -auto-approve --var-file=main.tfvars
+
+    

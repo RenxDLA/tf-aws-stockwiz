@@ -91,8 +91,3 @@ variable "lb_listener_action_type" {
   description = "Load Balancer Listener Action Type"
   type        = string
 }
-
-variable "image_tag_mutability" {
-  description = "ECR Image Tag Mutability"
-  type        = string
-}
