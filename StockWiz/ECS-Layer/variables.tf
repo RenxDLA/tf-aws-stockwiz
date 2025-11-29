@@ -92,3 +92,7 @@ variable "lb_listener_action_type" {
   type        = string
 }
 
+variable "image_tag_mutability" {
+  description = "ECR Image Tag Mutability"
+  type        = string
+}
