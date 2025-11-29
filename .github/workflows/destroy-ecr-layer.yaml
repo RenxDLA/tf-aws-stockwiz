@@ -1,4 +1,4 @@
-name: Terraform CI/CD - Destroy ECS Layer
+name: Terraform CI/CD - Destroy ECR Layer
 on:
   workflow_dispatch:
     inputs:
@@ -6,14 +6,6 @@ on:
         description: 'Type "DESTROY" to confirm'
         required: true
         type: string
-
-      environment:
-        description: 'Environment to destroy (stream or main)'
-        required: true
-        type: choice
-        options:
-          - stream
-          - main
 
 env:
   AWS_REGION: 'us-east-1'
@@ -28,16 +20,6 @@ jobs:
       run: |
         echo "Destroy confirmation not provided. Exiting."
         exit 1
-
-    - name: Select tfvars file
-      run: |
-        if [[ "${{ github.event.inputs.environment }}" == "main" ]]; then
-          echo "TFVARS_FILE=main.tfvars" >> $GITHUB_ENV
-          echo "BACKEND_FILE=backend-main.hcl" >> $GITHUB_ENV
-        else
-          echo "TFVARS_FILE=stream.tfvars" >> $GITHUB_ENV
-          echo "BACKEND_FILE=backend-stream.hcl" >> $GITHUB_ENV
-        fi
 
     - name: Checkout Repository
       uses: actions/checkout@v6
@@ -54,13 +36,13 @@ jobs:
       uses: hashicorp/setup-terraform@v3
 
     - name: Terraform Init
-      working-directory: ./StockWiz/ECS-Layer
-      run: terraform init -backend-config=${BACKEND_FILE}
+      working-directory: ./StockWiz/ECR-Layer
+      run: terraform init
 
     - name: Terraform Destroy
-      working-directory: ./StockWiz/ECS-Layer
-      run: terraform destroy -auto-approve --var-file=${TFVARS_FILE}
+      working-directory: ./StockWiz/ECR-Layer
+      run: terraform destroy -auto-approve --var-file=main.tfvars
     
     - name: Cleanup Complete
-      run: echo "Network Layer resources destroyed successfully."
+      run: echo "ECR Layer resources destroyed successfully."
       

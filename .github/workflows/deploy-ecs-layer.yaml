@@ -31,18 +31,20 @@ jobs:
     - name: Set up Terraform
       uses: hashicorp/setup-terraform@v3
 
-
-    - name: Terraform Init
-      working-directory: ./StockWiz/ECS-Layer
-      run: terraform init
-
     - name: Select tfvars file  
       run: |
         if [[ "${GITHUB_REF##*/}" == "main" ]]; then
           echo "TFVARS_FILE=main.tfvars" >> $GITHUB_ENV
+          echo "BACKEND_FILE=backend-main.hcl" >> $GITHUB_ENV
         else
           echo "TFVARS_FILE=stream.tfvars" >> $GITHUB_ENV
+          echo "BACKEND_FILE=backend-stream.hcl" >> $GITHUB_ENV
         fi
+
+    - name: Terraform Init
+      working-directory: ./StockWiz/ECS-Layer
+      run: terraform init -backend-config=${BACKEND_FILE}
+
 
     - name: Terraform Plan
       working-directory: ./StockWiz/ECS-Layer

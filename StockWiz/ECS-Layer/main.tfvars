@@ -38,4 +38,4 @@ lb_health_check = {
 lb_listener_port        = 80
 lb_listener_protocol    = "HTTP"
 lb_listener_action_type = "forward"
-image_tag_mutability = "MUTABLE"
+
