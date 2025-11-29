@@ -1,4 +1,4 @@
-name: Terraform CI/CD - Destroy Network Layer
+name: Terraform CI/CD - Destroy ECS Layer
 on:
   workflow_dispatch:
     inputs:

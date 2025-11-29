@@ -1,4 +1,4 @@
-name: Terraform CI/CD - Network Layer
+name: Terraform CI/CD - ECS Layer
 
 on:
   push:
