@@ -1,6 +1,6 @@
 resource "aws_ecr_repository" "ecr_repo" {
 
-  name                 = "${var.app_name}-ecr-repo"
+  name                 = lower("${var.app_name}-ecr-repo")
   image_tag_mutability = var.image_tag_mutability
 
   image_scanning_configuration {
@@ -10,7 +10,7 @@ resource "aws_ecr_repository" "ecr_repo" {
   force_delete = true
 
   tags = {
-    Name    = "${var.app_name}-ecr-repo"
+    Name    = lower("${var.app_name}-ecr-repo")
     Creator = "Terraform"
   }
 }
