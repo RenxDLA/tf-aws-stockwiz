@@ -19,11 +19,3 @@ module "route_table" {
   public_subnet_ids      = module.vpc.public_subnet_ids
   app_name               = var.app_name
 }
-
-module "ecr" {
-  source = "./modules/ECR"
-
-  app_name                  = var.app_name
-  vpc_id                    = module.vpc.vpc_id
-  image_tag_mutability      = var.image_tag_mutability
-}
