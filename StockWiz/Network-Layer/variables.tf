@@ -23,3 +23,8 @@ variable "route_table_cidr_block" {
   type = string
   default = "0.0.0.0/0"
 }
+
+variable "image_tag_mutability" {
+  description = "ECR Image Tag Mutability"
+  type        = string
+}
