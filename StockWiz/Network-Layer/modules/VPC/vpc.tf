@@ -19,5 +19,6 @@ resource "aws_subnet" "public" {
   tags = {
     Name        = "${var.app_name}-public-subnet-${count.index}"
     Creator     = "Terraform"
+    Type        = "public"
   }
 }
