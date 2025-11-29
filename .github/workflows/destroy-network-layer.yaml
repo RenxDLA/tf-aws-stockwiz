@@ -1,6 +1,6 @@
 name: Terraform CI/CD - Destroy Network Layer
 on:
-  workflows_dispatch:
+  workflow_dispatch:
     inputs:
       confirm-destroy:
         description: 'Type "DESTROY" to confirm'
