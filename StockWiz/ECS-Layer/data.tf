@@ -28,8 +28,9 @@ data "aws_subnets" "public" {
     values = [data.aws_vpc.network_vpc.id]
   }
 
-  # tags = {
-  #   Type = "public"
-  # }
+  filter {
+    name = "tag:Type"
+    values = ["public"]
+  }
 }
 
