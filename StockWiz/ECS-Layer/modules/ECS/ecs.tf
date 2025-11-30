@@ -181,3 +181,42 @@ resource "aws_ecs_service" "ecs_api_service" {
     Creator     = "Terraform"
   }
 }
+
+resource "aws_cloudwatch_log_group" "ecs_product_service"{
+  for_each = toset(var.environment_to_deploy)
+
+  name = lower("/ecs/services/${each.key}/${var.app_name}-product-service")
+  retention_in_days = 7
+
+  tags = {
+    Environment = each.key
+    Name        = lower("/ecs/services/${each.key}/${var.app_name}-product-service")
+    Creator     = "Terraform"
+  }
+}
+
+resource "aws_cloudwatch_log_group" "ecs_inventory_service"{
+  for_each = toset(var.environment_to_deploy)
+
+  name = lower("/ecs/services/${each.key}/${var.app_name}-inventory-service")
+  retention_in_days = 7
+
+  tags = {
+    Environment = each.key
+    Name        = lower("/ecs/services/${each.key}/${var.app_name}-inventory-service")
+    Creator     = "Terraform"
+  }
+}
+
+resource "aws_cloudwatch_log_group" "ecs_api_service"{
+  for_each = toset(var.environment_to_deploy)
+
+  name = lower("/ecs/services/${each.key}/${var.app_name}-api-service")
+  retention_in_days = 7
+
+  tags = {
+    Environment = each.key
+    Name        = lower("/ecs/services/${each.key}/${var.app_name}-api-service")
+    Creator     = "Terraform"
+  }
+}
