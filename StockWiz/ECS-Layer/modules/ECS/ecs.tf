@@ -21,7 +21,7 @@ resource "aws_ecs_task_definition" "ecs_product_task" {
   container_definitions = jsonencode([
     {
       name      = lower("${var.app_name}-product-service-${each.key}")
-      image     = lower("${var.ecr_url}:${var.app_name}-product-service-${each.key}-latest")
+      image     = lower("${var.ecr_url}:product-service-${each.key}-latest")
       essential = true
 
       portMappings = [
@@ -77,7 +77,7 @@ resource "aws_ecs_task_definition" "ecs_inventory_task" {
   container_definitions = jsonencode([
     {
       name      = lower("${var.app_name}-inventory-service-${each.key}")
-      image     = lower("${var.ecr_url}:${var.app_name}-inventory-service-${each.key}-latest")
+      image     = lower("${var.ecr_url}:inventory-service-${each.key}-latest")
       essential = true
 
       portMappings = [
@@ -133,7 +133,7 @@ resource "aws_ecs_task_definition" "ecs_api_task" {
   container_definitions = jsonencode([
     {
       name      = lower("${var.app_name}-api-service-${each.key}")
-      image     = lower("${var.ecr_url}:${var.app_name}-api-service-${each.key}-latest")
+      image     = lower("${var.ecr_url}:api-service-${each.key}-latest")
       essential = true
 
       portMappings = [
