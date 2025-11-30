@@ -31,6 +31,15 @@ resource "aws_ecs_task_definition" "ecs_product_task" {
           protocol      = var.task_product_container.protocol
         }
       ]
+
+      logConfiguration = {
+        logDriver = "awslogs"
+        options = {
+          awslogs-group         = aws_cloudwatch_log_group.ecs_product_service[each.key].name
+          awslogs-region        = "us-east-1"
+          awslogs-stream-prefix = "ecs-product-service"
+        }
+      }
     }
   ])
 
@@ -87,6 +96,15 @@ resource "aws_ecs_task_definition" "ecs_inventory_task" {
           protocol      = var.task_inventory_container.protocol
         }
       ]
+
+      logConfiguration = {
+        logDriver = "awslogs"
+        options = {
+          awslogs-group         = aws_cloudwatch_log_group.ecs_inventory_service[each.key].name
+          awslogs-region        = "us-east-1"
+          awslogs-stream-prefix = "ecs-inventory-service"
+        }
+      }
     }
   ])
 
@@ -143,6 +161,15 @@ resource "aws_ecs_task_definition" "ecs_api_task" {
           protocol      = var.task_api_container.protocol
         }
       ]
+
+      logConfiguration = {
+        logDriver = "awslogs"
+        options = {
+          awslogs-group         = aws_cloudwatch_log_group.ecs_api_service[each.key].name
+          awslogs-region        = "us-east-1"
+          awslogs-stream-prefix = "ecs-api-service"
+        }
+      }
     }
   ])
 
