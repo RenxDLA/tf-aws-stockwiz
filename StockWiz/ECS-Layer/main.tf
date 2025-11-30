@@ -5,6 +5,7 @@ module "security_groups" {
   app_name              = var.app_name
   vpc_id                = data.aws_vpc.network_vpc.id
   ingress               = var.ingress
+  task_ingress          = var.task_ingress
   egress                = var.egress
 }
 
@@ -16,7 +17,8 @@ module "load_balancer" {
   lb_type               = var.lb_type
   lb_security_group_ids = module.security_groups.alb_sg_ids
   public_subnet_ids     = data.aws_subnets.public.ids
-  lb_tg_port            = var.lb_tg_port
+  # lb uses the same port that the api container is using
+  lb_tg_port            = var.task_api_container.container_port
   lb_tg_protocol        = var.lb_tg_protocol
   vpc_id                = data.aws_vpc.network_vpc.id
   lb_tg_type            = var.lb_tg_type
