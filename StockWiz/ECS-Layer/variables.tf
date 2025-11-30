@@ -30,6 +30,15 @@ variable "ingress" {
   })
 }
 
+variable "task_ingress" {
+  description = "Ingress rules for ECS tasks security group (from the ALB SG)"
+  type = list(object({
+    from_port = number
+    to_port   = number
+    protocol  = string
+  }))
+}
+
 variable "egress" {
   description = "Egress rules for security group"
   type = object({

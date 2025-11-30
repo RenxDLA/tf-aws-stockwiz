@@ -33,12 +33,15 @@ resource "aws_security_group" "ecs_tasks_sg"{
   description = "Security group for ECS Tasks in ${each.key} environment"
   vpc_id      = var.vpc_id
 
-  ingress {
-    description = "Allow traffic from ALB"
-    from_port   = var.ingress.from_port
-    to_port     = var.ingress.to_port
-    protocol    = var.ingress.protocol
-    security_groups = [aws_security_group.alb_sg[each.key].id]
+  dynamic "ingress" {
+    for_each = var.task_ingress
+    content {
+      description = lookup(ingress.value, "description", "Allow traffic from ALB")
+      from_port   = ingress.value.from_port
+      to_port     = ingress.value.to_port
+      protocol    = ingress.value.protocol
+      security_groups = [aws_security_group.alb_sg[each.key].id]
+    }
   }
 
   egress {

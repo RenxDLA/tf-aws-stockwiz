@@ -21,7 +21,7 @@ egress = {
 # Load Balancer Variables
 lb_type        = "application"
 lb_tg_protocol = "HTTP"
-lb_tg_port     = 80
+# lb_tg_port     = 8000
 lb_tg_type     = "ip"
 
 lb_health_check = {
@@ -72,3 +72,8 @@ task_api_container = {
 product_service_count   = 1
 inventory_service_count = 1
 api_service_count       = 2
+task_ingress = [
+  { from_port = 8000, to_port = 8000, protocol = "tcp" },
+  { from_port = 8001, to_port = 8001, protocol = "tcp" },
+  { from_port = 8002, to_port = 8002, protocol = "tcp" }
+]
