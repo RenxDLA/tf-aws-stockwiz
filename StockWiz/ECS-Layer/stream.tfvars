@@ -38,3 +38,37 @@ lb_health_check = {
 lb_listener_port        = 80
 lb_listener_protocol    = "HTTP"
 lb_listener_action_type = "forward"
+
+# ECS Variables
+service_launch_type = "FARGATE"
+task_network_mode   = "awsvpc"
+task_product = {
+  cpu    = 256
+  memory = 512
+}
+task_product_container = {
+  container_port  = 8001
+  host_port       = 8001
+  protocol        = "tcp"
+}
+task_inventory = {
+  cpu    = 256
+  memory = 512
+}
+task_inventory_container = {
+  container_port  = 8002
+  host_port       = 8002
+  protocol        = "tcp"
+}
+task_api = {
+  cpu    = 256
+  memory = 512
+}
+task_api_container = {
+  container_port  = 8000
+  host_port       = 8000
+  protocol        = "tcp"
+}
+product_service_count   = 1
+inventory_service_count = 1
+api_service_count       = 2

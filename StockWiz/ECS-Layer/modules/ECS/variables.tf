@@ -3,96 +3,30 @@ variable "environment" {
   type        = string
 }
 
-variable "app_name" {
-  description = "Application name"
-  type        = string
-}
-
 variable "environment_to_deploy" {
   description = "List of environments to deploy"
   type        = list(string)
 }
 
-variable "aws_region" {
-  description = "AWS Region"
+variable "app_name" {
+  description = "Application name"
   type        = string
 }
 
-# Security Group Variables
-
-variable "ingress" {
-  description = "Ingress rules for security group"
-  type = object({
-    from_port   = number
-    to_port     = number
-    protocol    = string
-    cidr_blocks = list(string)
-  })
+variable "public_subnet_ids" {
+  description = "List of Public Subnet IDs"
+  type        = list(string)
 }
 
-variable "egress" {
-  description = "Egress rules for security group"
-  type = object({
-    from_port   = number
-    to_port     = number
-    protocol    = string
-    cidr_blocks = list(string)
-  })
+variable "security_group_ids" {
+  description = "List of Security Group IDs"
+  type        = list(string)
 }
 
-# Load Balancer Variables
-variable "lb_type" {
-  description = "Type of Load Balancer"
-  type        = string
+variable "alb_target_groups_arn" {
+  description = "ALB Target Groups ARN mapped by environment"
+  type        = map(string)
 }
-
-variable "lb_tg_protocol" {
-  description = "Load Balancer Target Group Protocol"
-  type        = string
-}
-
-variable "lb_tg_port" {
-  description = "Load Balancer Target Group Port"
-  type        = number
-}
-
-variable "lb_tg_type" {
-  description = "Load Balancer Target Group Type"
-  type        = string
-}
-
-# Load Balancer Health Check Variables
-variable "lb_health_check" {
-  description = "Load Balancer Health Check"
-  type = object({
-    healthy_threshold   = number
-    interval            = number
-    matcher             = number
-    path                = string
-    port                = string
-    protocol            = string
-    timeout             = number
-    unhealthy_threshold = number
-  })
-}
-
-# Load Balancer Listener Variables
-variable "lb_listener_port" {
-  description = "Load Balancer Listener Port"
-  type        = number
-}
-
-variable "lb_listener_protocol" {
-  description = "Load Balancer Listener Protocol"
-  type        = string
-}
-
-variable "lb_listener_action_type" {
-  description = "Load Balancer Listener Action Type"
-  type        = string
-}
-
-# ECS Variables
 
 variable "service_launch_type" {
   description = "ECS services launch type"
@@ -101,6 +35,11 @@ variable "service_launch_type" {
 
 variable "task_network_mode" {
   description = "ECS Tasks Network Mode"
+  type        = string
+}
+
+variable "task_execution_role_arn"{
+  description = "ECS Task Execution Role ARN"
   type        = string
 }
 
@@ -169,3 +108,10 @@ variable "api_service_count" {
   description = "Desired count of ECS API gateway service"
   type        = number
 }
+
+variable "ecr_url"{
+  description = "URL from ECR"
+  type = string
+}
+
+

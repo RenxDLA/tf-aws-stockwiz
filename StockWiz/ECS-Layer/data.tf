@@ -4,15 +4,6 @@ data "aws_iam_role" "lab_role" {
   name = "LabRole"
 }
 
-data "terraform_remote_state" "network" {
-  backend = "s3"
-  config = {
-    bucket = "tfstate-ob290199"
-    key    = "network-layer/terraform.tfstate"
-    region = "us-east-1"
-  }
-}
-
 # Discover the Network VPC using tags (app name). Generated with AI
 data "aws_vpc" "network_vpc" {
   filter {
@@ -34,3 +25,6 @@ data "aws_subnets" "public" {
   }
 }
 
+data "aws_ecr_repository" "ecr_url"{
+  name = lower("${var.app_name}-ecr-repo")
+}
