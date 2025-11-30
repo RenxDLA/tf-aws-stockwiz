@@ -28,10 +28,10 @@ lb_health_check = {
   healthy_threshold   = 2
   interval            = 30
   matcher             = "200"
-  path                = "/"
+  path                = "/health"
   port                = "traffic-port"
   protocol            = "HTTP"
-  timeout             = 5
+  timeout             = 10
   unhealthy_threshold = 2
 }
 
