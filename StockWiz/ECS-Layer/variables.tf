@@ -178,3 +178,13 @@ variable "api_service_count" {
   description = "Desired count of ECS API gateway service"
   type        = number
 }
+
+variable "database_url" {
+  description = "Database connection URL for services (e.g. postgres)"
+  type        = string
+}
+
+variable "redis_url" {
+  description = "Redis connection URL for services (e.g. redis://host:6379)"
+  type        = string
+}

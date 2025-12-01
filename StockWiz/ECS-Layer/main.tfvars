@@ -77,3 +77,6 @@ task_ingress = [
   { from_port = 8001, to_port = 8001, protocol = "tcp" },
   { from_port = 8002, to_port = 8002, protocol = "tcp" }
 ]
+
+database_url = ""
+redis_url = ""
