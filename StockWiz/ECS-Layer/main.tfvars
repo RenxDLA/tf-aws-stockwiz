@@ -61,8 +61,8 @@ task_inventory_container = {
   protocol       = "tcp"
 }
 task_api = {
-  cpu    = 256
-  memory = 512
+  cpu    = 1024
+  memory = 2048
 }
 task_api_container = {
   container_port = 8000
