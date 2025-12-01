@@ -7,5 +7,7 @@ locals {
   # Builds Redis connection strings for multiple environments
   # Creates a map where each key is an environment and value is a Redis connection URL
   # Used by application services for caching and session storage per environment
-  redis_urls = { for k in toset(var.environment_to_deploy) : k => "redis://${module.redis.redis_primary_endpoint_address[k]}:6379" }
+  redis_urls = { for k in toset(var.environment_to_deploy) : k => "redis://${module.redis.redis_primary_endpoint_address[k]}:${module.redis.redis_primary_port[k]}" }
+  # Redis addresses without scheme for Go-based services (host:port)
+  redis_addrs = { for k in toset(var.environment_to_deploy) : k => "${module.redis.redis_primary_endpoint_address[k]}:${module.redis.redis_primary_port[k]}" }
 }

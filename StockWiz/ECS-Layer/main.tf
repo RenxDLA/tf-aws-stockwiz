@@ -57,6 +57,7 @@ module "ecs_cluster" {
   ecr_url                  = data.aws_ecr_repository.ecr_url.repository_url
   database_url             = local.database_urls
   redis_url                = local.redis_urls
+  redis_addr               = local.redis_addrs
 
 }
 
