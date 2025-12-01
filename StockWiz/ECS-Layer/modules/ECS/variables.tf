@@ -18,6 +18,11 @@ variable "public_subnet_ids" {
   type        = list(string)
 }
 
+variable "vpc_id" {
+  description = "VPC ID"
+  type        = string
+}
+
 variable "security_group_ids" {
   description = "List of Security Group IDs"
   type        = list(string)
