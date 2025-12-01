@@ -24,6 +24,8 @@ resource "aws_ecs_task_definition" "ecs_product_task" {
       image     = lower("${var.ecr_url}:product-service-${each.key}-latest")
       essential = true
 
+      # generated with AI
+      # environment variables service to connect to DB, Redis and the other services
       environment = [
         {
           name  = "DATABASE_URL"
@@ -31,7 +33,15 @@ resource "aws_ecs_task_definition" "ecs_product_task" {
         },
         {
           name  = "REDIS_URL"
-          value = lookup(var.redis_url, each.key, "")
+          value = lookup(var.redis_addr, each.key, "")
+        },
+        {
+          name  = "PRODUCT_SERVICE_URL"
+          value = "http://${aws_service_discovery_service.product_sd[each.key].name}.${aws_service_discovery_private_dns_namespace.sd_namespace.name}:8001"
+        },
+        {
+          name  = "INVENTORY_SERVICE_URL"
+          value = "http://${aws_service_discovery_service.inventory_sd[each.key].name}.${aws_service_discovery_private_dns_namespace.sd_namespace.name}:8002"
         }
       ]
 
@@ -77,10 +87,50 @@ resource "aws_ecs_service" "ecs_product_service" {
     assign_public_ip = true
   }
 
+  # generated with AI
+  # service discovery registration
+  service_registries {
+    registry_arn = aws_service_discovery_service.product_sd[each.key].arn
+  }
+
   tags = {
     Environment = each.key
     Name        = lower("${var.app_name}-product-service-${each.key}")
     Creator     = "Terraform"
+  }
+}
+
+# Generated with AI
+# Service Discovery Namespace and Services (Inventory and Product) for ECS Tasks
+
+resource "aws_service_discovery_private_dns_namespace" "sd_namespace" {
+  name = lower("${var.app_name}.local")
+  vpc  = var.vpc_id
+}
+
+resource "aws_service_discovery_service" "product_sd" {
+  for_each = toset(var.environment_to_deploy)
+  name     = lower("${var.app_name}-product-service-${each.key}")
+  namespace_id = aws_service_discovery_private_dns_namespace.sd_namespace.id
+  dns_config {
+    namespace_id = aws_service_discovery_private_dns_namespace.sd_namespace.id
+    dns_records {
+      type = "A"
+      ttl  = 10
+    }
+  }
+}
+
+resource "aws_service_discovery_service" "inventory_sd" {
+  for_each = toset(var.environment_to_deploy)
+  name     = lower("${var.app_name}-inventory-service-${each.key}")
+  namespace_id = aws_service_discovery_private_dns_namespace.sd_namespace.id
+  dns_config {
+    namespace_id = aws_service_discovery_private_dns_namespace.sd_namespace.id
+    dns_records {
+      type = "A"
+      ttl  = 10
+    }
   }
 }
 
@@ -151,6 +201,11 @@ resource "aws_ecs_service" "ecs_inventory_service" {
     security_groups  = var.security_group_ids
     subnets          = var.public_subnet_ids
     assign_public_ip = true
+  }
+  # generated with AI
+  # service discovery registration
+  service_registries {
+    registry_arn = aws_service_discovery_service.inventory_sd[each.key].arn
   }
 
   tags = {
