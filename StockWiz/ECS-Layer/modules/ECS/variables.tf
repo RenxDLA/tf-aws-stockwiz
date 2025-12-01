@@ -164,9 +164,4 @@ variable "service_base_path_inventory" {
   default     = "/inventory"
 }
 
-variable "vpc_id" {
-  description = "VPC ID for service discovery"
-  type        = string
-}
-
 

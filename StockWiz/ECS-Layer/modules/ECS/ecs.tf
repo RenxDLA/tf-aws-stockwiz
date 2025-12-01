@@ -8,6 +8,10 @@ resource "aws_ecs_cluster" "ecs_cluster" {
   }
 }
 
+# Product and Inventory services are now deployed as sidecar containers in the API task
+# This allows them to communicate via localhost without needing Service Discovery
+
+/*
 resource "aws_ecs_task_definition" "ecs_product_task" {
   for_each = toset(var.environment_to_deploy)
 
@@ -77,10 +81,6 @@ resource "aws_ecs_service" "ecs_product_service" {
     security_groups  = var.security_group_ids
     subnets          = var.public_subnet_ids
     assign_public_ip = true
-  }
-
-  service_registries {
-    registry_arn = aws_service_discovery_service.product_service[each.key].arn
   }
 
   tags = {
@@ -159,16 +159,13 @@ resource "aws_ecs_service" "ecs_inventory_service" {
     assign_public_ip = true
   }
 
-  service_registries {
-    registry_arn = aws_service_discovery_service.inventory_service[each.key].arn
-  }
-
   tags = {
     Environment = each.key
     Name        = lower("${var.app_name}-inventory-service-${each.key}")
     Creator     = "Terraform"
   }
 }
+*/
 
 resource "aws_ecs_task_definition" "ecs_api_task" {
   for_each = toset(var.environment_to_deploy)
@@ -181,6 +178,72 @@ resource "aws_ecs_task_definition" "ecs_api_task" {
   execution_role_arn       = var.task_execution_role_arn
 
   container_definitions = jsonencode([
+    {
+      name      = lower("${var.app_name}-product-service-${each.key}")
+      image     = lower("${var.ecr_url}:product-service-${each.key}-latest")
+      essential = false
+
+      environment = [
+        {
+          name  = "DATABASE_URL"
+          value = lookup(var.database_url, each.key, "")
+        },
+        {
+          name  = "REDIS_URL"
+          value = lookup(var.redis_url, each.key, "")
+        }
+      ]
+
+      portMappings = [
+        {
+          containerPort = 8001
+          hostPort      = 8001
+          protocol      = "tcp"
+        }
+      ]
+
+      logConfiguration = {
+        logDriver = "awslogs"
+        options = {
+          awslogs-group         = aws_cloudwatch_log_group.ecs_product_service[each.key].name
+          awslogs-region        = var.aws_region
+          awslogs-stream-prefix = "ecs-product-service"
+        }
+      }
+    },
+    {
+      name      = lower("${var.app_name}-inventory-service-${each.key}")
+      image     = lower("${var.ecr_url}:inventory-service-${each.key}-latest")
+      essential = false
+
+      environment = [
+        {
+          name  = "DATABASE_URL"
+          value = lookup(var.database_url, each.key, "")
+        },
+        {
+          name  = "REDIS_URL"
+          value = lookup(var.redis_addr, each.key, "")
+        }
+      ]
+
+      portMappings = [
+        {
+          containerPort = 8002
+          hostPort      = 8002
+          protocol      = "tcp"
+        }
+      ]
+
+      logConfiguration = {
+        logDriver = "awslogs"
+        options = {
+          awslogs-group         = aws_cloudwatch_log_group.ecs_inventory_service[each.key].name
+          awslogs-region        = var.aws_region
+          awslogs-stream-prefix = "ecs-inventory-service"
+        }
+      }
+    },
     {
       name      = lower("${var.app_name}-api-service-${each.key}")
       image     = lower("${var.ecr_url}:api-service-${each.key}-latest")
@@ -197,11 +260,11 @@ resource "aws_ecs_task_definition" "ecs_api_task" {
         },
         {
           name  = "PRODUCT_SERVICE_URL"
-          value = "http://product-${lower(each.key)}.${var.app_name}.local:8001"
+          value = "http://localhost:8001"
         },
         {
           name  = "INVENTORY_SERVICE_URL"
-          value = "http://inventory-${lower(each.key)}.${var.app_name}.local:8002"
+          value = "http://localhost:8002"
         }
       ]
 
@@ -221,6 +284,17 @@ resource "aws_ecs_task_definition" "ecs_api_task" {
           awslogs-stream-prefix = "ecs-api-service"
         }
       }
+
+      dependsOn = [
+        {
+          containerName = lower("${var.app_name}-product-service-${each.key}")
+          condition     = "START"
+        },
+        {
+          containerName = lower("${var.app_name}-inventory-service-${each.key}")
+          condition     = "START"
+        }
+      ]
     }
   ])
 
@@ -295,66 +369,6 @@ resource "aws_cloudwatch_log_group" "ecs_api_service" {
   tags = {
     Environment = each.key
     Name        = lower("/ecs/services/${each.key}/${var.app_name}-api-service")
-    Creator     = "Terraform"
-  }
-}
-
-# Service Discovery Namespace
-resource "aws_service_discovery_private_dns_namespace" "services" {
-  name        = "${var.app_name}.local"
-  description = "Private DNS namespace for ${var.app_name} services"
-  vpc         = var.vpc_id
-
-  tags = {
-    Name    = "${var.app_name}.local"
-    Creator = "Terraform"
-  }
-}
-
-# Service Discovery for Product Service
-resource "aws_service_discovery_service" "product_service" {
-  for_each = toset(var.environment_to_deploy)
-
-  name = "product-${lower(each.key)}"
-
-  dns_config {
-    namespace_id = aws_service_discovery_private_dns_namespace.services.id
-
-    dns_records {
-      ttl  = 10
-      type = "A"
-    }
-
-    routing_policy = "MULTIVALUE"
-  }
-
-  tags = {
-    Environment = each.key
-    Name        = "product-service-discovery-${each.key}"
-    Creator     = "Terraform"
-  }
-}
-
-# Service Discovery for Inventory Service
-resource "aws_service_discovery_service" "inventory_service" {
-  for_each = toset(var.environment_to_deploy)
-
-  name = "inventory-${lower(each.key)}"
-
-  dns_config {
-    namespace_id = aws_service_discovery_private_dns_namespace.services.id
-
-    dns_records {
-      ttl  = 10
-      type = "A"
-    }
-
-    routing_policy = "MULTIVALUE"
-  }
-
-  tags = {
-    Environment = each.key
-    Name        = "inventory-service-discovery-${each.key}"
     Creator     = "Terraform"
   }
 }
