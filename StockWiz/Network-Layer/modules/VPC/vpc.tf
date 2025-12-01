@@ -4,21 +4,35 @@ resource "aws_vpc" "main" {
   enable_dns_hostnames = true
 
   tags = {
-    Name        = "${var.app_name}-vpc"
+    Name        = lower("${var.app_name}-vpc")
     Creator     = "Terraform"
   }
 }
 
 resource "aws_subnet" "public" {
-  count                   = 2
+  count                   = length(var.public_subnet_cidrs)
   vpc_id                  = aws_vpc.main.id
   cidr_block              = var.public_subnet_cidrs[count.index]
   availability_zone       = data.aws_availability_zones.available.names[count.index]
   map_public_ip_on_launch = true
 
   tags = {
-    Name        = "${var.app_name}-public-subnet-${count.index}"
+    Name        = lower("${var.app_name}-public-subnet-${count.index}")
     Creator     = "Terraform"
     Type        = "public"
+  }
+}
+
+resource "aws_subnet" "private" {
+  count             = length(var.private_subnet_cidrs)
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = var.private_subnet_cidrs[count.index]
+  availability_zone = data.aws_availability_zones.available.names[count.index]
+  map_public_ip_on_launch = false
+
+  tags = {
+    Name        = lower("${var.app_name}-private-subnet-${count.index}")
+    Creator     = "Terraform"
+    Type        = "private"
   }
 }

@@ -121,7 +121,7 @@ variable "task_product" {
   })
 }
 
-variable "task_product_container"{
+variable "task_product_container" {
   description = "Container definition for Product Service"
   type = object({
     container_port = number
@@ -138,7 +138,7 @@ variable "task_inventory" {
   })
 }
 
-variable "task_inventory_container"{
+variable "task_inventory_container" {
   description = "Container definition for Inventory Service"
   type = object({
     container_port = number
@@ -155,7 +155,7 @@ variable "task_api" {
   })
 }
 
-variable "task_api_container"{
+variable "task_api_container" {
   description = "Container definition for API Gateway Service"
   type = object({
     container_port = number
@@ -179,12 +179,43 @@ variable "api_service_count" {
   type        = number
 }
 
-variable "database_url" {
-  description = "Database connection URL for services (e.g. postgres)"
+# DB variables
+variable "db_username" {
+  type = string
+}
+
+variable "db_password" {
+  type      = string
+  sensitive = true
+}
+
+variable "instance_class" {
+  type    = string
+}
+
+variable "allocated_storage" {
+  type    = number
+}
+
+variable "engine" {
+  type    = string
+}
+
+variable "engine_version" {
+  type    = string
+}
+
+variable "db_port" {
+  type    = number
+}
+
+# Redis variables
+variable "node_type" {
+  description = "Redis node type"
   type        = string
 }
 
-variable "redis_url" {
-  description = "Redis connection URL for services (e.g. redis://host:6379)"
-  type        = string
+variable "num_cache_nodes" {
+  description = "Number of cache nodes"
+  type        = number
 }

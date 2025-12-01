@@ -78,5 +78,15 @@ task_ingress = [
   { from_port = 8002, to_port = 8002, protocol = "tcp" }
 ]
 
-database_url = ""
-redis_url = ""
+# DB variables
+db_username       = "admin"
+db_password       = "pass1234!"
+instance_class    = "db.t3.micro"
+allocated_storage = 20
+engine            = "postgres"
+engine_version    = "15"
+db_port           = 5432
+
+# Redis variables
+node_type        = "cache.t3.micro"
+num_cache_nodes  = 1

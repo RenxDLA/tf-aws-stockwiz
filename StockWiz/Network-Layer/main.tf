@@ -3,6 +3,7 @@ module "vpc" {
   vpc_cidr            = var.vpc_cidr
   app_name            = var.app_name
   public_subnet_cidrs = var.public_subnet_cidrs
+  private_subnet_cidrs = var.private_subnet_cidrs
 }
 
 module "internet_gateway" {

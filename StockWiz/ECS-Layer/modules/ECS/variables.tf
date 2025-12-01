@@ -38,7 +38,7 @@ variable "task_network_mode" {
   type        = string
 }
 
-variable "task_execution_role_arn"{
+variable "task_execution_role_arn" {
   description = "ECS Task Execution Role ARN"
   type        = string
 }
@@ -56,7 +56,7 @@ variable "task_product" {
   })
 }
 
-variable "task_product_container"{
+variable "task_product_container" {
   description = "Container definition for Product Service"
   type = object({
     container_port = number
@@ -73,7 +73,7 @@ variable "task_inventory" {
   })
 }
 
-variable "task_inventory_container"{
+variable "task_inventory_container" {
   description = "Container definition for Inventory Service"
   type = object({
     container_port = number
@@ -90,7 +90,7 @@ variable "task_api" {
   })
 }
 
-variable "task_api_container"{
+variable "task_api_container" {
   description = "Container definition for API Gateway Service"
   type = object({
     container_port = number
@@ -114,19 +114,19 @@ variable "api_service_count" {
   type        = number
 }
 
-variable "ecr_url"{
+variable "ecr_url" {
   description = "URL from ECR"
-  type = string
+  type        = string
 }
 
 variable "database_url" {
-  description = "Database connection URL for services (e.g. postgres)"
-  type        = string
+  description = "Database connection URL per environment"
+  type        = map(string)
 }
 
 variable "redis_url" {
-  description = "Redis connection URL for services (e.g. redis://host:6379)"
-  type        = string
+  description = "Redis connection URL per environment"
+  type        = map(string)
 }
 
 
