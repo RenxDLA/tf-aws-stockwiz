@@ -71,7 +71,7 @@ task_api_container = {
 }
 product_service_count   = 1
 inventory_service_count = 1
-api_service_count       = 2
+api_service_count       = 1
 task_ingress = [
   { from_port = 8000, to_port = 8000, protocol = "tcp" },
   { from_port = 8001, to_port = 8001, protocol = "tcp" },
