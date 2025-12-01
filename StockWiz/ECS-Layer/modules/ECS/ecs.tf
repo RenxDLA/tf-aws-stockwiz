@@ -79,12 +79,8 @@ resource "aws_ecs_service" "ecs_product_service" {
     assign_public_ip = true
   }
 
-  # generated with AI
-  # Register with ALB target group for Product
-  load_balancer {
-    target_group_arn = var.product_tg_arn[each.key]
-    container_name   = lower("${var.app_name}-product-service-${each.key}")
-    container_port   = var.task_product_container.container_port
+  service_registries {
+    registry_arn = aws_service_discovery_service.product_service[each.key].arn
   }
 
   tags = {
@@ -162,12 +158,9 @@ resource "aws_ecs_service" "ecs_inventory_service" {
     subnets          = var.public_subnet_ids
     assign_public_ip = true
   }
-  # generated with AI
-  # Register with ALB target group for Inventory
-  load_balancer {
-    target_group_arn = var.inventory_tg_arn[each.key]
-    container_name   = lower("${var.app_name}-inventory-service-${each.key}")
-    container_port   = var.task_inventory_container.container_port
+
+  service_registries {
+    registry_arn = aws_service_discovery_service.inventory_service[each.key].arn
   }
 
   tags = {
@@ -204,11 +197,11 @@ resource "aws_ecs_task_definition" "ecs_api_task" {
         },
         {
           name  = "PRODUCT_SERVICE_URL"
-          value = "http://${var.alb_dns_name[each.key]}"
+          value = "http://product-${lower(each.key)}.${var.app_name}.local:8001"
         },
         {
           name  = "INVENTORY_SERVICE_URL"
-          value = "http://${var.alb_dns_name[each.key]}"
+          value = "http://inventory-${lower(each.key)}.${var.app_name}.local:8002"
         }
       ]
 
@@ -302,6 +295,66 @@ resource "aws_cloudwatch_log_group" "ecs_api_service" {
   tags = {
     Environment = each.key
     Name        = lower("/ecs/services/${each.key}/${var.app_name}-api-service")
+    Creator     = "Terraform"
+  }
+}
+
+# Service Discovery Namespace
+resource "aws_service_discovery_private_dns_namespace" "services" {
+  name        = "${var.app_name}.local"
+  description = "Private DNS namespace for ${var.app_name} services"
+  vpc         = var.vpc_id
+
+  tags = {
+    Name    = "${var.app_name}.local"
+    Creator = "Terraform"
+  }
+}
+
+# Service Discovery for Product Service
+resource "aws_service_discovery_service" "product_service" {
+  for_each = toset(var.environment_to_deploy)
+
+  name = "product-${lower(each.key)}"
+
+  dns_config {
+    namespace_id = aws_service_discovery_private_dns_namespace.services.id
+
+    dns_records {
+      ttl  = 10
+      type = "A"
+    }
+
+    routing_policy = "MULTIVALUE"
+  }
+
+  tags = {
+    Environment = each.key
+    Name        = "product-service-discovery-${each.key}"
+    Creator     = "Terraform"
+  }
+}
+
+# Service Discovery for Inventory Service
+resource "aws_service_discovery_service" "inventory_service" {
+  for_each = toset(var.environment_to_deploy)
+
+  name = "inventory-${lower(each.key)}"
+
+  dns_config {
+    namespace_id = aws_service_discovery_private_dns_namespace.services.id
+
+    dns_records {
+      ttl  = 10
+      type = "A"
+    }
+
+    routing_policy = "MULTIVALUE"
+  }
+
+  tags = {
+    Environment = each.key
+    Name        = "inventory-service-discovery-${each.key}"
     Creator     = "Terraform"
   }
 }
