@@ -79,7 +79,7 @@ task_ingress = [
 ]
 
 # DB variables
-db_username       = "admin"
+db_username       = "dbuser"
 db_password       = "pass1234!"
 instance_class    = "db.t3.micro"
 allocated_storage = 20
