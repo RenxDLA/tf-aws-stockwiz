@@ -5,7 +5,7 @@ resource "aws_elasticache_replication_group" "redis" {
   description                = "Redis replication group for ${var.app_name} in ${each.key} environment"
   node_type                  = var.node_type
   num_cache_clusters         = var.num_cache_nodes
-  port                       = 6379
+  port                       = var.redis_port
   subnet_group_name          = aws_elasticache_subnet_group.redis_subnet_group[each.key].name
   security_group_ids         = var.security_group_ids[each.key]
   automatic_failover_enabled = false
