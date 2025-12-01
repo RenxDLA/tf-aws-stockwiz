@@ -61,16 +61,16 @@ task_inventory_container = {
   protocol        = "tcp"
 }
 task_api = {
-  cpu    = 1024
-  memory = 2048
+  cpu    = 2048
+  memory = 4096
 }
 task_api_container = {
   container_port  = 8000
   host_port       = 8000
   protocol        = "tcp"
 }
-product_service_count   = 1
-inventory_service_count = 1
+product_service_count   = 0
+inventory_service_count = 0
 api_service_count       = 1
 task_ingress = [
   { from_port = 8000, to_port = 8000, protocol = "tcp" },

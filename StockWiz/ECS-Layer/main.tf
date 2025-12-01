@@ -58,11 +58,8 @@ module "ecs_cluster" {
   database_url             = local.database_urls
   redis_url                = local.redis_urls
   redis_addr               = local.redis_addrs
-  alb_dns_name                         = module.load_balancer.alb_dns_name
   target_group_path_prefix_product    = var.target_group_path_prefix_product
   target_group_path_prefix_inventory  = var.target_group_path_prefix_inventory
-  product_tg_arn = module.load_balancer.product_tg_arn
-  inventory_tg_arn = module.load_balancer.inventory_tg_arn
 }
 
 module "rds" {

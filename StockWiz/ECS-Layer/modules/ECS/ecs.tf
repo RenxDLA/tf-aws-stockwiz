@@ -8,6 +8,10 @@ resource "aws_ecs_cluster" "ecs_cluster" {
   }
 }
 
+# Product and Inventory services are now deployed as sidecar containers in the API task
+# This allows them to communicate via localhost without needing Service Discovery
+
+/*
 resource "aws_ecs_task_definition" "ecs_product_task" {
   for_each = toset(var.environment_to_deploy)
 
@@ -77,14 +81,6 @@ resource "aws_ecs_service" "ecs_product_service" {
     security_groups  = var.security_group_ids
     subnets          = var.public_subnet_ids
     assign_public_ip = true
-  }
-
-  # generated with AI
-  # Register with ALB target group for Product
-  load_balancer {
-    target_group_arn = var.product_tg_arn[each.key]
-    container_name   = lower("${var.app_name}-product-service-${each.key}")
-    container_port   = var.task_product_container.container_port
   }
 
   tags = {
@@ -162,13 +158,6 @@ resource "aws_ecs_service" "ecs_inventory_service" {
     subnets          = var.public_subnet_ids
     assign_public_ip = true
   }
-  # generated with AI
-  # Register with ALB target group for Inventory
-  load_balancer {
-    target_group_arn = var.inventory_tg_arn[each.key]
-    container_name   = lower("${var.app_name}-inventory-service-${each.key}")
-    container_port   = var.task_inventory_container.container_port
-  }
 
   tags = {
     Environment = each.key
@@ -176,6 +165,7 @@ resource "aws_ecs_service" "ecs_inventory_service" {
     Creator     = "Terraform"
   }
 }
+*/
 
 resource "aws_ecs_task_definition" "ecs_api_task" {
   for_each = toset(var.environment_to_deploy)
@@ -188,6 +178,72 @@ resource "aws_ecs_task_definition" "ecs_api_task" {
   execution_role_arn       = var.task_execution_role_arn
 
   container_definitions = jsonencode([
+    {
+      name      = lower("${var.app_name}-product-service-${each.key}")
+      image     = lower("${var.ecr_url}:product-service-${each.key}-latest")
+      essential = false
+
+      environment = [
+        {
+          name  = "DATABASE_URL"
+          value = lookup(var.database_url, each.key, "")
+        },
+        {
+          name  = "REDIS_URL"
+          value = lookup(var.redis_url, each.key, "")
+        }
+      ]
+
+      portMappings = [
+        {
+          containerPort = 8001
+          hostPort      = 8001
+          protocol      = "tcp"
+        }
+      ]
+
+      logConfiguration = {
+        logDriver = "awslogs"
+        options = {
+          awslogs-group         = aws_cloudwatch_log_group.ecs_product_service[each.key].name
+          awslogs-region        = var.aws_region
+          awslogs-stream-prefix = "ecs-product-service"
+        }
+      }
+    },
+    {
+      name      = lower("${var.app_name}-inventory-service-${each.key}")
+      image     = lower("${var.ecr_url}:inventory-service-${each.key}-latest")
+      essential = false
+
+      environment = [
+        {
+          name  = "DATABASE_URL"
+          value = lookup(var.database_url, each.key, "")
+        },
+        {
+          name  = "REDIS_URL"
+          value = lookup(var.redis_addr, each.key, "")
+        }
+      ]
+
+      portMappings = [
+        {
+          containerPort = 8002
+          hostPort      = 8002
+          protocol      = "tcp"
+        }
+      ]
+
+      logConfiguration = {
+        logDriver = "awslogs"
+        options = {
+          awslogs-group         = aws_cloudwatch_log_group.ecs_inventory_service[each.key].name
+          awslogs-region        = var.aws_region
+          awslogs-stream-prefix = "ecs-inventory-service"
+        }
+      }
+    },
     {
       name      = lower("${var.app_name}-api-service-${each.key}")
       image     = lower("${var.ecr_url}:api-service-${each.key}-latest")
@@ -204,11 +260,11 @@ resource "aws_ecs_task_definition" "ecs_api_task" {
         },
         {
           name  = "PRODUCT_SERVICE_URL"
-          value = "http://${var.alb_dns_name[each.key]}"
+          value = "http://localhost:8001"
         },
         {
           name  = "INVENTORY_SERVICE_URL"
-          value = "http://${var.alb_dns_name[each.key]}"
+          value = "http://localhost:8002"
         }
       ]
 
@@ -228,6 +284,17 @@ resource "aws_ecs_task_definition" "ecs_api_task" {
           awslogs-stream-prefix = "ecs-api-service"
         }
       }
+
+      dependsOn = [
+        {
+          containerName = lower("${var.app_name}-product-service-${each.key}")
+          condition     = "START"
+        },
+        {
+          containerName = lower("${var.app_name}-inventory-service-${each.key}")
+          condition     = "START"
+        }
+      ]
     }
   ])
 
