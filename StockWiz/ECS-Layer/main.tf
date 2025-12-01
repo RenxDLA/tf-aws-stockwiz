@@ -39,7 +39,6 @@ module "ecs_cluster" {
   environment_to_deploy    = var.environment_to_deploy
   app_name                 = var.app_name
   public_subnet_ids        = data.aws_subnets.public.ids
-  vpc_id                   = data.aws_vpc.network_vpc.id
   security_group_ids       = module.security_groups.ecs_tasks_sg_ids
   alb_target_groups_arn    = module.load_balancer.alb_target_groups_arn
   service_launch_type      = var.service_launch_type
@@ -59,7 +58,11 @@ module "ecs_cluster" {
   database_url             = local.database_urls
   redis_url                = local.redis_urls
   redis_addr               = local.redis_addrs
-
+  alb_dns_name                         = module.load_balancer.alb_dns_name
+  target_group_path_prefix_product    = var.target_group_path_prefix_product
+  target_group_path_prefix_inventory  = var.target_group_path_prefix_inventory
+  product_tg_arn = module.load_balancer.product_tg_arn
+  inventory_tg_arn = module.load_balancer.inventory_tg_arn
 }
 
 module "rds" {

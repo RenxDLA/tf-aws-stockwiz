@@ -179,6 +179,18 @@ variable "api_service_count" {
   type        = number
 }
 
+variable "target_group_path_prefix_product" {
+  description = "Path prefix for product API to route via ALB (fallback)"
+  type        = string
+  default     = "/api/products"
+}
+
+variable "target_group_path_prefix_inventory" {
+  description = "Path prefix for inventory API to route via ALB (fallback)"
+  type        = string
+  default     = "/api/inventory"
+}
+
 # DB variables
 variable "db_username" {
   type = string
