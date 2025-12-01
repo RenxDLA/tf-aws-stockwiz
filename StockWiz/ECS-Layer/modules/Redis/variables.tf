@@ -34,3 +34,7 @@ variable "num_cache_nodes" {
   type        = number
 }
 
+variable "redis_port" {
+  description = "Redis port"
+  type        = number
+}

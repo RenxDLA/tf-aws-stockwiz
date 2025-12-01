@@ -202,23 +202,23 @@ variable "db_password" {
 }
 
 variable "instance_class" {
-  type    = string
+  type = string
 }
 
 variable "allocated_storage" {
-  type    = number
+  type = number
 }
 
 variable "engine" {
-  type    = string
+  type = string
 }
 
 variable "engine_version" {
-  type    = string
+  type = string
 }
 
 variable "db_port" {
-  type    = number
+  type = number
 }
 
 # Redis variables
@@ -229,5 +229,10 @@ variable "node_type" {
 
 variable "num_cache_nodes" {
   description = "Number of cache nodes"
+  type        = number
+}
+
+variable "redis_port" {
+  description = "Redis port"
   type        = number
 }

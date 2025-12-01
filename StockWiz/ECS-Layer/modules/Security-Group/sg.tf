@@ -122,8 +122,8 @@ resource "aws_security_group" "redis_sg" {
 resource "aws_security_group_rule" "allow_ecs_to_redis" {
   for_each                 = toset(var.environment_to_deploy)
   type                     = "ingress"
-  from_port                = 6379
-  to_port                  = 6379
+  from_port                = var.redis_port
+  to_port                  = var.redis_port
   protocol                 = "tcp"
   security_group_id        = aws_security_group.redis_sg[each.key].id
   source_security_group_id = aws_security_group.ecs_tasks_sg[each.key].id

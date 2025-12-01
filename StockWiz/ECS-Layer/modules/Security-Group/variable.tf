@@ -46,3 +46,8 @@ variable "egress" {
 variable "db_port" {
   type = number
 }
+
+variable "redis_port" {
+  description = "Redis port"
+  type        = number
+}

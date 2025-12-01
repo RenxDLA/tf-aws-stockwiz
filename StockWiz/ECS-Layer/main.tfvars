@@ -91,3 +91,4 @@ db_port           = 5432
 # Redis variables
 node_type       = "cache.t3.micro"
 num_cache_nodes = 1
+redis_port      = 6379
