@@ -18,11 +18,6 @@ variable "public_subnet_ids" {
   type        = list(string)
 }
 
-variable "vpc_id" {
-  description = "VPC ID"
-  type        = string
-}
-
 variable "security_group_ids" {
   description = "List of Security Group IDs"
   type        = list(string)
@@ -137,6 +132,34 @@ variable "redis_url" {
 variable "redis_addr" {
   description = "Redis address (host:port) per environment for Go services that don't accept URL scheme"
   type        = map(string)
+}
+
+variable "alb_dns_name" {
+  description = "ALB dns names mapped by env (from Load Balancer module)"
+  type        = map(string)
+  default     = {}
+}
+
+variable "target_group_path_prefix_product" {
+  description = "Path prefix for product API to route via ALB (fallback)"
+  type        = string
+}
+
+variable "target_group_path_prefix_inventory" {
+  description = "Path prefix for inventory API to route via ALB (fallback)"
+  type        = string
+}
+
+variable "inventory_tg_arn" {
+  description = "Inventory service ALB Target Group ARN mapped by environment"
+  type        = map(string)
+  
+}
+
+variable "product_tg_arn" {
+  description = "Product service ALB Target Group ARN mapped by environment"
+  type        = map(string)
+  
 }
 
 
