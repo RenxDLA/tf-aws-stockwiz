@@ -21,7 +21,7 @@ egress = {
 # Load Balancer Variables
 lb_type        = "application"
 lb_tg_protocol = "HTTP"
-# lb_tg_port     = 8000
+lb_tg_port     = 80
 lb_tg_type = "ip"
 
 lb_health_check = {
