@@ -164,16 +164,9 @@ variable "service_base_path_inventory" {
   default     = "/inventory"
 }
 
-variable "inventory_tg_arn" {
-  description = "Inventory service ALB Target Group ARN mapped by environment"
-  type        = map(string)
-  
-}
-
-variable "product_tg_arn" {
-  description = "Product service ALB Target Group ARN mapped by environment"
-  type        = map(string)
-  
+variable "vpc_id" {
+  description = "VPC ID for service discovery"
+  type        = string
 }
 
 
