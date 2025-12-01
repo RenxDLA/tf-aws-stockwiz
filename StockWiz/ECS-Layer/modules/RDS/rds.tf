@@ -1,7 +1,7 @@
 resource "aws_db_instance" "db" {
   for_each = toset(var.environment_to_deploy)
 
-  db_name                 = lower("${var.app_name}-db-${each.key}")
+  db_name                 = lower("db${var.app_name}${each.key}")
   allocated_storage       = var.allocated_storage
   engine                  = var.engine
   engine_version          = var.engine_version
