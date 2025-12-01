@@ -38,7 +38,6 @@ module "ecs_cluster" {
   environment              = var.environment
   environment_to_deploy    = var.environment_to_deploy
   app_name                 = var.app_name
-  vpc_id                   = data.aws_vpc.network_vpc.id
   public_subnet_ids        = data.aws_subnets.public.ids
   security_group_ids       = module.security_groups.ecs_tasks_sg_ids
   alb_target_groups_arn    = module.load_balancer.alb_target_groups_arn
