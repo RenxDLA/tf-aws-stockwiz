@@ -9,15 +9,15 @@ output "ecs_cluster_arn" {
 }
 
 #Generated with AI
-output "ecs_product_service_name"{
-  description = "The name of the ECS product service"
-  value       = module.ecs_cluster.ecs_product_service_name
-}
+# output "ecs_product_service_name"{
+#   description = "The name of the ECS product service"
+#   value       = module.ecs_cluster.ecs_product_service_name
+# }
 
-output "ecs_inventory_service_name"{
-  description = "The name of the ECS inventory service"
-  value       = module.ecs_cluster.ecs_inventory_service_name
-}
+# output "ecs_inventory_service_name"{
+#   description = "The name of the ECS inventory service"
+#   value       = module.ecs_cluster.ecs_inventory_service_name
+# }
 
 output "ecs_api_service_name"{
   description = "The name of the ECS API Gateway service"
