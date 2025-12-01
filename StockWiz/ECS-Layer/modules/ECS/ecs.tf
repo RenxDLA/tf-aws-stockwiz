@@ -27,11 +27,11 @@ resource "aws_ecs_task_definition" "ecs_product_task" {
       environment = [
         {
           name  = "DATABASE_URL"
-          value = var.database_url
+          value = lookup(var.database_url, each.key, "")
         },
         {
           name  = "REDIS_URL"
-          value = var.redis_url
+          value = lookup(var.redis_url, each.key, "")
         }
       ]
 
@@ -47,7 +47,7 @@ resource "aws_ecs_task_definition" "ecs_product_task" {
         logDriver = "awslogs"
         options = {
           awslogs-group         = aws_cloudwatch_log_group.ecs_product_service[each.key].name
-              awslogs-region        = var.aws_region
+          awslogs-region        = var.aws_region
           awslogs-stream-prefix = "ecs-product-service"
         }
       }
@@ -103,11 +103,11 @@ resource "aws_ecs_task_definition" "ecs_inventory_task" {
       environment = [
         {
           name  = "DATABASE_URL"
-          value = var.database_url
+          value = lookup(var.database_url, each.key, "")
         },
         {
           name  = "REDIS_URL"
-          value = var.redis_url
+          value = lookup(var.redis_url, each.key, "")
         }
       ]
 
@@ -123,7 +123,7 @@ resource "aws_ecs_task_definition" "ecs_inventory_task" {
         logDriver = "awslogs"
         options = {
           awslogs-group         = aws_cloudwatch_log_group.ecs_inventory_service[each.key].name
-              awslogs-region        = var.aws_region
+          awslogs-region        = var.aws_region
           awslogs-stream-prefix = "ecs-inventory-service"
         }
       }
@@ -179,11 +179,11 @@ resource "aws_ecs_task_definition" "ecs_api_task" {
       environment = [
         {
           name  = "DATABASE_URL"
-          value = var.database_url
+          value = lookup(var.database_url, each.key, "")
         },
         {
           name  = "REDIS_URL"
-          value = var.redis_url
+          value = lookup(var.redis_url, each.key, "")
         }
       ]
 
@@ -199,7 +199,7 @@ resource "aws_ecs_task_definition" "ecs_api_task" {
         logDriver = "awslogs"
         options = {
           awslogs-group         = aws_cloudwatch_log_group.ecs_api_service[each.key].name
-              awslogs-region        = var.aws_region
+          awslogs-region        = var.aws_region
           awslogs-stream-prefix = "ecs-api-service"
         }
       }
@@ -242,10 +242,10 @@ resource "aws_ecs_service" "ecs_api_service" {
   }
 }
 
-resource "aws_cloudwatch_log_group" "ecs_product_service"{
+resource "aws_cloudwatch_log_group" "ecs_product_service" {
   for_each = toset(var.environment_to_deploy)
 
-  name = lower("/ecs/services/${each.key}/${var.app_name}-product-service")
+  name              = lower("/ecs/services/${each.key}/${var.app_name}-product-service")
   retention_in_days = 7
 
   tags = {
@@ -255,10 +255,10 @@ resource "aws_cloudwatch_log_group" "ecs_product_service"{
   }
 }
 
-resource "aws_cloudwatch_log_group" "ecs_inventory_service"{
+resource "aws_cloudwatch_log_group" "ecs_inventory_service" {
   for_each = toset(var.environment_to_deploy)
 
-  name = lower("/ecs/services/${each.key}/${var.app_name}-inventory-service")
+  name              = lower("/ecs/services/${each.key}/${var.app_name}-inventory-service")
   retention_in_days = 7
 
   tags = {
@@ -268,10 +268,10 @@ resource "aws_cloudwatch_log_group" "ecs_inventory_service"{
   }
 }
 
-resource "aws_cloudwatch_log_group" "ecs_api_service"{
+resource "aws_cloudwatch_log_group" "ecs_api_service" {
   for_each = toset(var.environment_to_deploy)
 
-  name = lower("/ecs/services/${each.key}/${var.app_name}-api-service")
+  name              = lower("/ecs/services/${each.key}/${var.app_name}-api-service")
   retention_in_days = 7
 
   tags = {

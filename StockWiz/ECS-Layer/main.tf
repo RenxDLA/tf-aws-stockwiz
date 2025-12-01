@@ -7,6 +7,7 @@ module "security_groups" {
   ingress               = var.ingress
   task_ingress          = var.task_ingress
   egress                = var.egress
+  db_port               = var.db_port
 }
 
 module "load_balancer" {
@@ -18,10 +19,10 @@ module "load_balancer" {
   lb_security_group_ids = module.security_groups.alb_sg_ids
   public_subnet_ids     = data.aws_subnets.public.ids
   # lb uses the same port that the api container is using
-  lb_tg_port            = var.task_api_container.container_port
-  lb_tg_protocol        = var.lb_tg_protocol
-  vpc_id                = data.aws_vpc.network_vpc.id
-  lb_tg_type            = var.lb_tg_type
+  lb_tg_port     = var.task_api_container.container_port
+  lb_tg_protocol = var.lb_tg_protocol
+  vpc_id         = data.aws_vpc.network_vpc.id
+  lb_tg_type     = var.lb_tg_type
 
   lb_health_check = var.lb_health_check
 
@@ -54,7 +55,38 @@ module "ecs_cluster" {
   inventory_service_count  = var.inventory_service_count
   api_service_count        = var.api_service_count
   ecr_url                  = data.aws_ecr_repository.ecr_url.repository_url
-  database_url             = var.database_url
-  redis_url                = var.redis_url
+  database_url             = local.database_urls
+  redis_url                = local.redis_urls
 
 }
+
+module "rds" {
+  source = "./modules/RDS"
+
+  environment_to_deploy = var.environment_to_deploy
+  security_group_ids    = module.security_groups.db_sg_ids
+  db_port               = var.db_port
+  engine                = var.engine
+  engine_version        = var.engine_version
+  vpc_id                = data.aws_vpc.network_vpc.id
+  private_subnet_ids    = data.aws_subnets.private.ids
+  db_username           = var.db_username
+  db_password           = var.db_password
+  instance_class        = var.instance_class
+  allocated_storage     = var.allocated_storage
+  app_name              = var.app_name
+}
+
+module "redis" {
+  source = "./modules/Redis"
+
+  environment_to_deploy = var.environment_to_deploy
+  security_group_ids    = module.security_groups.redis_sg_ids
+  node_type             = var.node_type
+  num_cache_nodes       = var.num_cache_nodes
+  vpc_id                = data.aws_vpc.network_vpc.id
+  private_subnet_ids    = data.aws_subnets.private.ids
+  app_name              = var.app_name
+}
+
+

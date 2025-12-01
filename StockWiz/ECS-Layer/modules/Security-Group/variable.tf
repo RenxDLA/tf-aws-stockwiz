@@ -8,7 +8,7 @@ variable "app_name" {
   type        = string
 }
 
-variable "vpc_id"{
+variable "vpc_id" {
   description = "VPC ID"
   type        = string
 }
@@ -41,4 +41,8 @@ variable "egress" {
     protocol    = string
     cidr_blocks = list(string)
   })
+}
+
+variable "db_port" {
+  type = number
 }

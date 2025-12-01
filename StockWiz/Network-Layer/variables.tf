@@ -23,3 +23,8 @@ variable "route_table_cidr_block" {
   type = string
   default = "0.0.0.0/0"
 }
+
+variable "private_subnet_cidrs" {
+  description = "List of private subnet CIDR blocks"
+  type        = list(string)
+}

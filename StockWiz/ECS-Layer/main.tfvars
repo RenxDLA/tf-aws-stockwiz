@@ -22,7 +22,7 @@ egress = {
 lb_type        = "application"
 lb_tg_protocol = "HTTP"
 # lb_tg_port     = 8000
-lb_tg_type     = "ip"
+lb_tg_type = "ip"
 
 lb_health_check = {
   healthy_threshold   = 2
@@ -47,27 +47,27 @@ task_product = {
   memory = 512
 }
 task_product_container = {
-  container_port  = 8001
-  host_port       = 8001
-  protocol        = "tcp"
+  container_port = 8001
+  host_port      = 8001
+  protocol       = "tcp"
 }
 task_inventory = {
   cpu    = 256
   memory = 512
 }
 task_inventory_container = {
-  container_port  = 8002
-  host_port       = 8002
-  protocol        = "tcp"
+  container_port = 8002
+  host_port      = 8002
+  protocol       = "tcp"
 }
 task_api = {
   cpu    = 256
   memory = 512
 }
 task_api_container = {
-  container_port  = 8000
-  host_port       = 8000
-  protocol        = "tcp"
+  container_port = 8000
+  host_port      = 8000
+  protocol       = "tcp"
 }
 product_service_count   = 1
 inventory_service_count = 1
@@ -78,5 +78,16 @@ task_ingress = [
   { from_port = 8002, to_port = 8002, protocol = "tcp" }
 ]
 
-database_url = ""
-redis_url = ""
+
+# DB variables
+db_username       = "admin"
+db_password       = "pass1234!"
+instance_class    = "db.t3.micro"
+allocated_storage = 20
+engine            = "postgres"
+engine_version    = "15"
+db_port           = 5432
+
+# Redis variables
+node_type       = "cache.t3.micro"
+num_cache_nodes = 1
