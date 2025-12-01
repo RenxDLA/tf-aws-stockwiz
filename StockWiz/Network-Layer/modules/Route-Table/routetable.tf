@@ -7,7 +7,7 @@ resource "aws_route_table" "public" {
   }
 
   tags = {
-    Name    = "${var.app_name}-public-rt"
+    Name    = lower("${var.app_name}-public-rt")
     Creator = "Terraform"
   }
 }

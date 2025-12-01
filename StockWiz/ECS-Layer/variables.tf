@@ -30,6 +30,15 @@ variable "ingress" {
   })
 }
 
+variable "task_ingress" {
+  description = "Ingress rules for ECS tasks security group (from the ALB SG)"
+  type = list(object({
+    from_port = number
+    to_port   = number
+    protocol  = string
+  }))
+}
+
 variable "egress" {
   description = "Egress rules for security group"
   type = object({
@@ -90,4 +99,135 @@ variable "lb_listener_protocol" {
 variable "lb_listener_action_type" {
   description = "Load Balancer Listener Action Type"
   type        = string
+}
+
+# ECS Variables
+
+variable "service_launch_type" {
+  description = "ECS services launch type"
+  type        = string
+}
+
+variable "task_network_mode" {
+  description = "ECS Tasks Network Mode"
+  type        = string
+}
+
+variable "task_product" {
+  description = "ECS Task for Product Service"
+  type = object({
+    cpu    = number
+    memory = number
+  })
+}
+
+variable "task_product_container" {
+  description = "Container definition for Product Service"
+  type = object({
+    container_port = number
+    host_port      = number
+    protocol       = string
+  })
+}
+
+variable "task_inventory" {
+  description = "ECS Task for Inventory Service"
+  type = object({
+    cpu    = number
+    memory = number
+  })
+}
+
+variable "task_inventory_container" {
+  description = "Container definition for Inventory Service"
+  type = object({
+    container_port = number
+    host_port      = number
+    protocol       = string
+  })
+}
+
+variable "task_api" {
+  description = "ECS Task for API Gateway Service"
+  type = object({
+    cpu    = number
+    memory = number
+  })
+}
+
+variable "task_api_container" {
+  description = "Container definition for API Gateway Service"
+  type = object({
+    container_port = number
+    host_port      = number
+    protocol       = string
+  })
+}
+
+variable "product_service_count" {
+  description = "Desired count of ECS product service"
+  type        = number
+}
+
+variable "inventory_service_count" {
+  description = "Desired count of ECS inventory service"
+  type        = number
+}
+
+variable "api_service_count" {
+  description = "Desired count of ECS API gateway service"
+  type        = number
+}
+
+variable "target_group_path_prefix_product" {
+  description = "Path prefix for product API to route via ALB (fallback)"
+  type        = string
+  default     = "/api/products"
+}
+
+variable "target_group_path_prefix_inventory" {
+  description = "Path prefix for inventory API to route via ALB (fallback)"
+  type        = string
+  default     = "/api/inventory"
+}
+
+# DB variables
+variable "db_username" {
+  type = string
+}
+
+variable "db_password" {
+  type      = string
+  sensitive = true
+}
+
+variable "instance_class" {
+  type    = string
+}
+
+variable "allocated_storage" {
+  type    = number
+}
+
+variable "engine" {
+  type    = string
+}
+
+variable "engine_version" {
+  type    = string
+}
+
+variable "db_port" {
+  type    = number
+}
+
+# Redis variables
+variable "node_type" {
+  description = "Redis node type"
+  type        = string
+}
+
+variable "num_cache_nodes" {
+  description = "Number of cache nodes"
+  type        = number
 }

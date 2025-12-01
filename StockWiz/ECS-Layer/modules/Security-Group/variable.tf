@@ -8,19 +8,29 @@ variable "app_name" {
   type        = string
 }
 
-variable "vpc_id"{
+variable "vpc_id" {
   description = "VPC ID"
   type        = string
 }
 
 variable "ingress" {
-  description = "Ingress rules for security group"
+  description = "List of ingress rules for security group"
   type = object({
+    description = optional(string)
     from_port   = number
     to_port     = number
     protocol    = string
-    cidr_blocks = list(string)
+    cidr_blocks = optional(list(string))
   })
+}
+
+variable "task_ingress" {
+  description = "Ingress rules to open on ECS tasks SG "
+  type = list(object({
+    from_port = number
+    to_port   = number
+    protocol  = string
+  }))
 }
 
 variable "egress" {
@@ -31,4 +41,8 @@ variable "egress" {
     protocol    = string
     cidr_blocks = list(string)
   })
+}
+
+variable "db_port" {
+  type = number
 }
