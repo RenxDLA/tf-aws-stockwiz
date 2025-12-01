@@ -23,3 +23,8 @@ output "ecs_api_service_name"{
   description = "The name of the ECS API Gateway service"
   value       = module.ecs_cluster.ecs_api_service_name
 }
+
+output "alb_dns_name" {
+  description = "ALB DNS name for each environment"
+  value       = module.load_balancer.alb_dns_name
+}
