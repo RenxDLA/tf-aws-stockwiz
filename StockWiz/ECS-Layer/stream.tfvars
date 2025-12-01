@@ -1,5 +1,5 @@
 environment           = "Stream"
-environment_to_deploy = ["Dev"]
+environment_to_deploy = ["Dev", "Test"]
 aws_region            = "us-east-1"
 app_name              = "StockWiz"
 
