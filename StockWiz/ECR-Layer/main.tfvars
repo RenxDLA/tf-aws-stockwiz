@@ -1,3 +1,6 @@
-aws_region = "us-east-1"
-app_name = "StockWiz"
+aws_region           = "us-east-1"
+app_name             = "StockWiz"
 image_tag_mutability = "MUTABLE"
+lambda_name          = "stockwiz-ecr-lambda"
+lambda_handler       = "lambda.lambda_handler"
+runtime              = "python3.13"
