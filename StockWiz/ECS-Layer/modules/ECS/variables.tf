@@ -143,11 +143,25 @@ variable "alb_dns_name" {
 variable "target_group_path_prefix_product" {
   description = "Path prefix for product API to route via ALB (fallback)"
   type        = string
+  default     = "/api/products"
 }
 
 variable "target_group_path_prefix_inventory" {
   description = "Path prefix for inventory API to route via ALB (fallback)"
   type        = string
+  default     = "/api/inventory"
+}
+
+variable "service_base_path_product" {
+  description = "Service base path used by API when calling product service (no /api prefix)"
+  type        = string
+  default     = "/products"
+}
+
+variable "service_base_path_inventory" {
+  description = "Service base path used by API when calling inventory service (no /api prefix)"
+  type        = string
+  default     = "/inventory"
 }
 
 variable "inventory_tg_arn" {
