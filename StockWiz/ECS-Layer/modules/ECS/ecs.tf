@@ -24,6 +24,17 @@ resource "aws_ecs_task_definition" "ecs_product_task" {
       image     = lower("${var.ecr_url}:product-service-${each.key}-latest")
       essential = true
 
+      environment = [
+        {
+          name  = "DATABASE_URL"
+          value = var.database_url
+        },
+        {
+          name  = "REDIS_URL"
+          value = var.redis_url
+        }
+      ]
+
       portMappings = [
         {
           containerPort = var.task_product_container.container_port
@@ -36,7 +47,7 @@ resource "aws_ecs_task_definition" "ecs_product_task" {
         logDriver = "awslogs"
         options = {
           awslogs-group         = aws_cloudwatch_log_group.ecs_product_service[each.key].name
-          awslogs-region        = "us-east-1"
+              awslogs-region        = var.aws_region
           awslogs-stream-prefix = "ecs-product-service"
         }
       }
@@ -89,6 +100,17 @@ resource "aws_ecs_task_definition" "ecs_inventory_task" {
       image     = lower("${var.ecr_url}:inventory-service-${each.key}-latest")
       essential = true
 
+      environment = [
+        {
+          name  = "DATABASE_URL"
+          value = var.database_url
+        },
+        {
+          name  = "REDIS_URL"
+          value = var.redis_url
+        }
+      ]
+
       portMappings = [
         {
           containerPort = var.task_inventory_container.container_port
@@ -101,7 +123,7 @@ resource "aws_ecs_task_definition" "ecs_inventory_task" {
         logDriver = "awslogs"
         options = {
           awslogs-group         = aws_cloudwatch_log_group.ecs_inventory_service[each.key].name
-          awslogs-region        = "us-east-1"
+              awslogs-region        = var.aws_region
           awslogs-stream-prefix = "ecs-inventory-service"
         }
       }
@@ -154,6 +176,17 @@ resource "aws_ecs_task_definition" "ecs_api_task" {
       image     = lower("${var.ecr_url}:api-service-${each.key}-latest")
       essential = true
 
+      environment = [
+        {
+          name  = "DATABASE_URL"
+          value = var.database_url
+        },
+        {
+          name  = "REDIS_URL"
+          value = var.redis_url
+        }
+      ]
+
       portMappings = [
         {
           containerPort = var.task_api_container.container_port
@@ -166,7 +199,7 @@ resource "aws_ecs_task_definition" "ecs_api_task" {
         logDriver = "awslogs"
         options = {
           awslogs-group         = aws_cloudwatch_log_group.ecs_api_service[each.key].name
-          awslogs-region        = "us-east-1"
+              awslogs-region        = var.aws_region
           awslogs-stream-prefix = "ecs-api-service"
         }
       }
