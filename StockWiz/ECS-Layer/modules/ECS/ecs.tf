@@ -204,11 +204,11 @@ resource "aws_ecs_task_definition" "ecs_api_task" {
         },
         {
           name  = "PRODUCT_SERVICE_URL"
-          value = "http://${var.alb_dns_name[each.key]}${var.target_group_path_prefix_product}"
+          value = "http://${var.alb_dns_name[each.key]}"
         },
         {
           name  = "INVENTORY_SERVICE_URL"
-          value = "http://${var.alb_dns_name[each.key]}${var.target_group_path_prefix_inventory}"
+          value = "http://${var.alb_dns_name[each.key]}"
         }
       ]
 
