@@ -6,6 +6,7 @@ on:
       - main
     paths:
       - 'StockWiz/ECR-Layer/**'
+      - '!**/*.md'
     workflows_dispatch:
 
 env:
