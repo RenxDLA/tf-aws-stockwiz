@@ -129,4 +129,9 @@ variable "redis_url" {
   type        = map(string)
 }
 
+variable "redis_addr" {
+  description = "Redis address (host:port) per environment for Go services that don't accept URL scheme"
+  type        = map(string)
+}
+
 

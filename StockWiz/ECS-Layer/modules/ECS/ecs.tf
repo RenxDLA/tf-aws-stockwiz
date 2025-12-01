@@ -107,7 +107,7 @@ resource "aws_ecs_task_definition" "ecs_inventory_task" {
         },
         {
           name  = "REDIS_URL"
-          value = lookup(var.redis_url, each.key, "")
+          value = lookup(var.redis_addr, each.key, "")
         }
       ]
 
@@ -183,7 +183,7 @@ resource "aws_ecs_task_definition" "ecs_api_task" {
         },
         {
           name  = "REDIS_URL"
-          value = lookup(var.redis_url, each.key, "")
+          value = lookup(var.redis_addr, each.key, "")
         }
       ]
 
