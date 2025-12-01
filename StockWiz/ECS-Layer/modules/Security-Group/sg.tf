@@ -66,14 +66,6 @@ resource "aws_security_group" "db_sg" {
   description = "Security group for DB in ${each.key}"
   vpc_id      = var.vpc_id
 
-  # Allow inbound from VPC (CIDR) as a fallback; we'll add more secure rule from ECS layer later
-  ingress {
-    from_port   = var.db_port
-    to_port     = var.db_port
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
   egress {
     from_port   = var.egress.from_port
     to_port     = var.egress.to_port
@@ -85,6 +77,10 @@ resource "aws_security_group" "db_sg" {
     Name        = lower("${var.app_name}-db-sg-${each.key}")
     Creator     = "Terraform"
     Environment = each.key
+  }
+
+  lifecycle {
+    ignore_changes = [ingress]
   }
 }
 
@@ -105,14 +101,6 @@ resource "aws_security_group" "redis_sg" {
   description = "Security group for Redis ${each.key}"
   vpc_id      = var.vpc_id
 
-  # Allow inbound from everywhere as a fallback; will be tightened using ECS layer rules
-  ingress {
-    from_port   = 6379
-    to_port     = 6379
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
   egress {
     from_port   = var.egress.from_port
     to_port     = var.egress.to_port
@@ -124,6 +112,10 @@ resource "aws_security_group" "redis_sg" {
     Name        = lower("${var.app_name}-redis-sg-${each.key}")
     Creator     = "Terraform"
     Environment = each.key
+  }
+
+  lifecycle {
+    ignore_changes = [ingress]
   }
 }
 
